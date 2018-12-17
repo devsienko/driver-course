@@ -6,11 +6,14 @@
 #include "MFCApplication2.h"
 #include "MFCApplication2Dlg.h"
 #include "afxdialogex.h"
+#include "winioctl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
+#define DEVICE_SEND CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_WRITE_DATA)
+#define DEVICE_REC CTL_CODE(FILE_DEVICE_UNKNOWN, 0x802, METHOD_BUFFERED, FILE_READ_DATA)
 
 // CAboutDlg dialog used for App About
 
@@ -66,6 +69,8 @@ BEGIN_MESSAGE_MAP(CMFCApplication2Dlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDC_BUTTON1, &CMFCApplication2Dlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON2, &CMFCApplication2Dlg::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_BUTTON3, &CMFCApplication2Dlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON4, &CMFCApplication2Dlg::OnBnClickedButton4)
 END_MESSAGE_MAP()
 
 
@@ -176,4 +181,42 @@ void CMFCApplication2Dlg::OnBnClickedButton2()
 	// TODO: Add your control notification handler code here
 	if(devicehandle != INVALID_HANDLE_VALUE)
 		CloseHandle(devicehandle);
+}
+
+
+void CMFCApplication2Dlg::OnBnClickedButton3()
+{
+	// TODO: Add your control notification handler code here
+	WCHAR* message = L"send sample from mfc";
+	ULONG returnLength = 0;
+	char wr[4] = { 0 };
+	if (devicehandle != INVALID_HANDLE_VALUE && devicehandle != NULL) {
+		if (!DeviceIoControl(devicehandle, DEVICE_SEND, message, (wcslen(message) + 1) * 2, NULL, 
+			0, &returnLength, 0))
+		{
+			MessageBox(L"DeviceIoControl error", 0, 0);
+		}
+		else {
+			_itoa_s(returnLength, wr, 10);
+			MessageBoxA(0, wr, 0, 0);
+		}
+	}
+}
+
+
+void CMFCApplication2Dlg::OnBnClickedButton4()
+{
+	// TODO: Add your control notification handler code here
+	WCHAR message[1024] = { 0 };
+	ULONG returnLength = 0;
+
+	if (devicehandle != INVALID_HANDLE_VALUE && devicehandle != NULL) {
+		if (!DeviceIoControl(devicehandle, DEVICE_REC, NULL, 0, message, 1024, &returnLength, 0))
+		{
+			MessageBox(L"DeviceIoControl error", 0, 0);
+		}
+		else {
+			MessageBox(message, 0, 0);
+		}
+	}
 }

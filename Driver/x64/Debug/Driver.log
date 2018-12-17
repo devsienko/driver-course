@@ -1,14 +1,21 @@
 ﻿  Building 'Driver' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(402,5): warning MSB8038: Spectre mitigation is enabled but Spectre mitigated libraries are not found.  Verify that the Visual Studio Workload includes the Spectre mitigated libraries.  See https://aka.ms/Ofhn4c for more information.
   Stamping x64\Debug\Driver.inf
-  Stamping [Version] section with DriverVer=11/26/2018,10.57.10.481
+  Stamping [Version] section with DriverVer=12/16/2018,10.55.57.700
   Source.c
-c:\users\daniil6\source\repos\driver\driver\source.c(8): warning C4100: 'DriverObject': unreferenced formal parameter
-c:\users\daniil6\source\repos\driver\driver\source.c(15): warning C4459: declaration of 'DeviceObject' hides global declaration
-  c:\users\daniil6\source\repos\driver\driver\source.c(6): note: see declaration of 'DeviceObject'
-c:\users\daniil6\source\repos\driver\driver\source.c(15): warning C4100: 'DeviceObject': unreferenced formal parameter
-c:\users\daniil6\source\repos\driver\driver\source.c(57): warning C4133: 'function': incompatible types - from 'PDRIVER_OBJECT' to 'PDEVICE_OBJECT'
-c:\users\daniil6\source\repos\driver\driver\source.c(40): warning C4100: 'RegistryPath': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\driver\source.c(11): warning C4100: 'DriverObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\driver\source.c(18): warning C4459: declaration of 'DeviceObject' hides global declaration
+  c:\users\daniil6\source\repos\driver\driver\source.c(9): note: see declaration of 'DeviceObject'
+c:\users\daniil6\source\repos\driver\driver\source.c(18): warning C4100: 'DeviceObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\driver\source.c(41): warning C4459: declaration of 'DeviceObject' hides global declaration
+  c:\users\daniil6\source\repos\driver\driver\source.c(9): note: see declaration of 'DeviceObject'
+c:\users\daniil6\source\repos\driver\driver\source.c(55): warning C4267: '=': conversion from 'size_t' to 'ULONG', possible loss of data
+c:\users\daniil6\source\repos\driver\driver\source.c(59): warning C4267: '=': conversion from 'size_t' to 'ULONG', possible loss of data
+c:\users\daniil6\source\repos\driver\driver\source.c(41): warning C4100: 'DeviceObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\driver\source.c(48): warning C4189: 'outLength': local variable is initialized but not referenced
+c:\users\daniil6\source\repos\driver\driver\source.c(47): warning C4189: 'inLength': local variable is initialized but not referenced
+c:\users\daniil6\source\repos\driver\driver\source.c(88): warning C4133: 'function': incompatible types - from 'PDRIVER_OBJECT' to 'PDEVICE_OBJECT'
+c:\users\daniil6\source\repos\driver\driver\source.c(71): warning C4100: 'RegistryPath': unreferenced formal parameter
   Driver.vcxproj -> C:\Users\daniil6\source\repos\Driver\x64\Debug\Driver.sys
   Done Adding Additional Store
   Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\Driver.sys

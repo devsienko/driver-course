@@ -1,5 +1,3 @@
-//18-18 https://www.youtube.com/watch?v=5bTAYQeKY6k&list=PLZ4EgN7ZCzJyUT-FmgHsW4e9BxfP-VMuo&index=5
-
 #include "ntddk.h"
 #include "intrin.h"
 #define DELAY_ONE_MICROSECOND (-10)
@@ -8,7 +6,7 @@
 
 #define DEVICE_SEND CTL_CODE(FILE_DEVICE_UNKNOWN, 0x801, METHOD_BUFFERED, FILE_WRITE_DATA)
 #define DEVICE_REC CTL_CODE(FILE_DEVICE_UNKNOWN, 0x802, METHOD_BUFFERED, FILE_READ_DATA)
-
+VOID create_systhread();
 UNICODE_STRING DeviceName = RTL_CONSTANT_STRING(L"\\Device\\mydevice123");
 UNICODE_STRING SymLinkName = RTL_CONSTANT_STRING(L"\\??\\mydevicelink123");
 PDEVICE_OBJECT DeviceObject = NULL;
@@ -21,6 +19,12 @@ BOOLEAN signal = FALSE;
 PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX Info = NULL;
 UINT64 structsize = 0;
 KSPIN_LOCK datalock;
+PVOID outputBuffer = NULL;
+
+typedef struct {
+	ULONG cpuid; 
+	ULONG cputempdata;
+}TEMP_NODE, *PTEMP_NODE;
 
 VOID Unload(IN PDRIVER_OBJECT DriverObject)
 {
@@ -30,6 +34,7 @@ VOID Unload(IN PDRIVER_OBJECT DriverObject)
 		ExFreePool(Info);
 	}
 
+	KeReleaseSemaphore(&Se, 0, cpunum, FALSE);
 	for (int i = 0; i < cpunum && threadobj[i]; i++) {
 		KeWaitForSingleObject(threadobj[i], Executive, KernelMode, FALSE, NULL);
 		ObDereferenceObject(threadobj[i]);
@@ -84,10 +89,12 @@ NTSTATUS DispatchDevCTL(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 		}
 		break;
 	case DEVICE_REC:
+		outputBuffer = buffer;
 		KeReleaseSemaphore(&Se, 0, cpunum, FALSE);
 		while (1) {
 			KeDelayExecutionThread(KernelMode, FALSE, &interval);
 			if (datanum == cpunum) {
+				returnLength = sizeof(TEMP_NODE) * cpunum;
 				break;
 			}
 		}
@@ -111,6 +118,7 @@ VOID MyProc(PVOID Context)
 	ULONG cputemp = 0;
 	ULONG cpuid = ((UINT64)Context - (UINT64)Info) / structsize;
 	KIRQL oirql;
+	PTEMP_NODE tnode;
 	groupaff = ((PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX)Context)->Processor.GroupMask[0];
 	KeSetSystemGroupAffinityThread(&groupaff, NULL);
 
@@ -122,15 +130,21 @@ VOID MyProc(PVOID Context)
 		}
 
 		readout = __readmsr(index);
-
+retry:
 		if ((readout & 0x80000000)) {
 			delta = (readout >> 16) & 0x7F;
 			cputemp = 100 - delta;
 			DbgPrint("cpu %d : temp is %d \r\n", cpuid, cputemp);
+			tnode = (PTEMP_NODE)outputBuffer;
 
+			tnode[cpuid].cputempdata = cputemp;
+			tnode[cpuid].cpuid = cpuid;
 			KeAcquireSpinLock(&datalock, &oirql);
 			datanum++;
-			KeReleaseSpinLock(&datalock, &oirql);
+			KeReleaseSpinLock(&datalock, oirql);
+		}
+		else {
+			goto retry;
 		}
 	}
 

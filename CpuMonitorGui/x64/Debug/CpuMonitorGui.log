@@ -1,0 +1,39 @@
+﻿  Building 'CpuMonitorGui' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(402,5): warning MSB8038: Spectre mitigation is enabled but Spectre mitigated libraries are not found.  Verify that the Visual Studio Workload includes the Spectre mitigated libraries.  See https://aka.ms/Ofhn4c for more information.
+  Stamping x64\Debug\CpuMonitorGui.inf
+  Stamping [Version] section with DriverVer=12/24/2018,21.33.0.616
+  Source.c
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(38): warning C4018: '<': signed/unsigned mismatch
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(29): warning C4100: 'DriverObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(48): warning C4459: declaration of 'DeviceObject' hides global declaration
+  c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(12): note: see declaration of 'DeviceObject'
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(48): warning C4100: 'DeviceObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(71): warning C4459: declaration of 'DeviceObject' hides global declaration
+  c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(12): note: see declaration of 'DeviceObject'
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(71): warning C4100: 'DeviceObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(78): warning C4189: 'outLength': local variable is initialized but not referenced
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(77): warning C4189: 'inLength': local variable is initialized but not referenced
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(79): warning C4189: 'demo': local variable is initialized but not referenced
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(119): warning C4242: 'initializing': conversion from 'UINT64' to 'ULONG', possible loss of data
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(159): warning C4018: '<': signed/unsigned mismatch
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(221): warning C4242: '=': conversion from 'UINT64' to 'ULONG', possible loss of data
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(240): warning C4133: 'function': incompatible types - from 'PDRIVER_OBJECT' to 'PDEVICE_OBJECT'
+c:\users\daniil6\source\repos\driver\cpumonitorgui\source.c(177): warning C4100: 'RegistryPath': unreferenced formal parameter
+  CpuMonitorGui.vcxproj -> C:\Users\daniil6\source\repos\Driver\x64\Debug\CpuMonitorGui.sys
+  Done Adding Additional Store
+  Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\CpuMonitorGui.sys
+  
+  ........................
+  Signability test complete.
+  
+  Errors:
+  None
+  
+  Warnings:
+  None
+  
+  Catalog generation complete.
+  C:\Users\daniil6\source\repos\Driver\x64\Debug\CpuMonitorGui\cpumonitorgui.cat
+  Done Adding Additional Store
+  Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\CpuMonitorGui\cpumonitorgui.cat
+  

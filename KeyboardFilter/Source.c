@@ -33,7 +33,7 @@ NTSTATUS MyAttachDevice(PDRIVER_OBJECT DriverObject)
 	}
 
 	myKbdDevice->Flags |= DO_BUFFERED_IO;
-	myKbdDevice->Flags &= DO_DEVICE_INITIALIZING;
+	myKbdDevice->Flags &= ~DO_DEVICE_INITIALIZING;
 
 	RtlZeroMemory(myKbdDevice->DeviceExtension, sizeof(DEVICE_EXTENSION));
 

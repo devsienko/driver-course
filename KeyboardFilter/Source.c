@@ -1,11 +1,21 @@
 #include <ntddk.h>
-//https://www.youtube.com/watch?v=JVWtFsmOkA0&index=7&list=PLZ4EgN7ZCzJyUT-FmgHsW4e9BxfP-VMuo
-//20:25
+//https://www.youtube.com/watch?v=UlzctiY2NSg&index=8&list=PLZ4EgN7ZCzJyUT-FmgHsW4e9BxfP-VMuo
+//16:11
+
 typedef struct {
 	PDEVICE_OBJECT LowerKbdDevice;
 } DEVICE_EXTENSION, * PDEVICE_EXTENSION;
 
+typedef struct _KEYBOARD_INPUT_DATA {
+	USHORT UnitId;
+	USHORT MakeCode;
+	USHORT Flags;
+	USHORT Reserved;
+	ULONG  ExtraInformation;
+} KEYBOARD_INPUT_DATA, *PKEYBOARD_INPUT_DATA;
+
 PDEVICE_OBJECT myKbdDevice = NULL;
+
 
 VOID DriverUnload(PDRIVER_OBJECT DriverObject) 
 {
@@ -15,12 +25,29 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
 	KdPrint(("Unload Our Driver  \r\n"));
 }
 
-NTSTATUS DispatchPass(PDEVICE_OBJECT DeviceObject, PIRP Irp) {
-	return STATUS_SUCCESS;
+NTSTATUS DispatchPass(PDEVICE_OBJECT DeviceObject, PIRP Irp) 
+{
+	IoCopyCurrentIrpStackLocationToNext(Irp);
+	return IoCallDriver(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice, Irp);
 }
 
-NTSTATUS DispatchRead(PDEVICE_OBJECT DeviceObject, PIRP Irp) {
-	return STATUS_SUCCESS;
+NTSTATUS ReadComplete(PDEVICE_OBJECT DeviceObject, PIRP Irp, PVOID Context)
+{
+	CHAR* keyflag[4] = { "KeyDown", "KeyUp", "E0", "E1" };
+	PKEYBOARD_INPUT_DATA Keys = (PKEYBOARD_INPUT_DATA)Irp->AssociatedIrp.SystemBuffer;
+
+	if (Irp->IoStatus.Status == STATUS_SUCCESS) {
+		KdPrint(("the scan code is %x (%s)\n", Keys->MakeCode, keyflag[Keys->Flags]));
+	}
+}
+
+NTSTATUS DispatchRead(PDEVICE_OBJECT DeviceObject, PIRP Irp) 
+{
+	IoCopyCurrentIrpStackLocationToNext(Irp);
+
+	IoSetCompletionRoutine(Irp, ReadComplete, NULL, TRUE, TRUE, TRUE);
+
+	return IoCallDriver(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice, Irp);
 }
 
 NTSTATUS MyAttachDevice(PDRIVER_OBJECT DriverObject)

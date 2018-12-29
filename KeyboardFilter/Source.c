@@ -1,6 +1,4 @@
 #include <ntddk.h>
-//https://www.youtube.com/watch?v=UlzctiY2NSg&index=8&list=PLZ4EgN7ZCzJyUT-FmgHsW4e9BxfP-VMuo
-//16:11
 
 typedef struct {
 	PDEVICE_OBJECT LowerKbdDevice;
@@ -15,12 +13,17 @@ typedef struct _KEYBOARD_INPUT_DATA {
 } KEYBOARD_INPUT_DATA, *PKEYBOARD_INPUT_DATA;
 
 PDEVICE_OBJECT myKbdDevice = NULL;
-
+ULONG pendingkey = 0;
 
 VOID DriverUnload(PDRIVER_OBJECT DriverObject) 
 {
+	LARGE_INTEGER interval = { 0 };
 	PDEVICE_OBJECT DeviceObject = DriverObject->DeviceObject;
+	interval.QuadPart = -10 * 1000 * 1000;
 	IoDetachDevice(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice);
+	while (pendingkey) {
+		KeDelayExecutionThread(KernelMode, FALSE, &interval);
+	}
 	IoDeleteDevice(myKbdDevice);
 	KdPrint(("Unload Our Driver  \r\n"));
 }
@@ -35,10 +38,19 @@ NTSTATUS ReadComplete(PDEVICE_OBJECT DeviceObject, PIRP Irp, PVOID Context)
 {
 	CHAR* keyflag[4] = { "KeyDown", "KeyUp", "E0", "E1" };
 	PKEYBOARD_INPUT_DATA Keys = (PKEYBOARD_INPUT_DATA)Irp->AssociatedIrp.SystemBuffer;
-
+	int structnum = Irp->IoStatus.Information / sizeof(KEYBOARD_INPUT_DATA);
+	int i;
 	if (Irp->IoStatus.Status == STATUS_SUCCESS) {
-		KdPrint(("the scan code is %x (%s)\n", Keys->MakeCode, keyflag[Keys->Flags]));
+		for (i = 0; i < structnum; i++) {
+			KdPrint(("the scan code is %x (%s)\n", Keys[i].MakeCode, keyflag[Keys->Flags]));
+		}
 	}
+
+	if (Irp->PendingReturned) {
+		IoMarkIrpPending(Irp);
+	}
+	pendingkey--;
+	return Irp->IoStatus.Status;
 }
 
 NTSTATUS DispatchRead(PDEVICE_OBJECT DeviceObject, PIRP Irp) 
@@ -46,6 +58,8 @@ NTSTATUS DispatchRead(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 	IoCopyCurrentIrpStackLocationToNext(Irp);
 
 	IoSetCompletionRoutine(Irp, ReadComplete, NULL, TRUE, TRUE, TRUE);
+
+	pendingkey++;
 
 	return IoCallDriver(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice, Irp);
 }

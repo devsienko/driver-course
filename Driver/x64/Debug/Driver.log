@@ -1,16 +1,12 @@
 ﻿  Building 'Driver' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(402,5): warning MSB8038: Spectre mitigation is enabled but Spectre mitigated libraries are not found.  Verify that the Visual Studio Workload includes the Spectre mitigated libraries.  See https://aka.ms/Ofhn4c for more information.
   Stamping x64\Debug\Driver.inf
-  Stamping [Version] section with DriverVer=12/19/2018,21.42.22.226
-  Source.c
-c:\users\daniil6\source\repos\driver\driver\source.c(4): warning C4100: 'DriverObject': unreferenced formal parameter
-c:\users\daniil6\source\repos\driver\driver\source.c(9): warning C4100: 'RegistryPath': unreferenced formal parameter
-c:\users\daniil6\source\repos\driver\driver\source.c(11): warning C4101: 'status': unreferenced local variable
+  Stamping [Version] section with DriverVer=12/25/2018,8.49.51.92
   Driver.vcxproj -> C:\Users\daniil6\source\repos\Driver\x64\Debug\Driver.sys
   Done Adding Additional Store
   Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\Driver.sys
   
-  ........................
+  .........................
   Signability test complete.
   
   Errors:

@@ -1,0 +1,27 @@
+﻿  Building 'KeyboardFilter' with toolset 'WindowsKernelModeDriver10.0' and the 'Desktop' target platform.
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(402,5): warning MSB8038: Spectre mitigation is enabled but Spectre mitigated libraries are not found.  Verify that the Visual Studio Workload includes the Spectre mitigated libraries.  See https://aka.ms/Ofhn4c for more information.
+  Stamping x64\Debug\KeyboardFilter.inf
+  Stamping [Version] section with DriverVer=12/29/2018,1.7.40.474
+  Source.c
+c:\users\daniil6\source\repos\driver\keyboardfilter\source.c(41): warning C4242: 'initializing': conversion from 'ULONG_PTR' to 'int', possible loss of data
+c:\users\daniil6\source\repos\driver\keyboardfilter\source.c(37): warning C4100: 'Context': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\keyboardfilter\source.c(37): warning C4100: 'DeviceObject': unreferenced formal parameter
+c:\users\daniil6\source\repos\driver\keyboardfilter\source.c(89): warning C4100: 'RegistryPath': unreferenced formal parameter
+  KeyboardFilter.vcxproj -> C:\Users\daniil6\source\repos\Driver\x64\Debug\KeyboardFilter.sys
+  Done Adding Additional Store
+  Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\KeyboardFilter.sys
+  
+  .........................
+  Signability test complete.
+  
+  Errors:
+  None
+  
+  Warnings:
+  None
+  
+  Catalog generation complete.
+  C:\Users\daniil6\source\repos\Driver\x64\Debug\KeyboardFilter\keyboardfilter.cat
+  Done Adding Additional Store
+  Successfully signed: C:\Users\daniil6\source\repos\Driver\x64\Debug\KeyboardFilter\keyboardfilter.cat
+  

@@ -1,5 +1,5 @@
 ;
-; Driver.inf
+; KeyboardFilter.inf
 ;
 
 [Version]
@@ -7,8 +7,8 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider=%ManufacturerName%
-DriverVer = 12/25/2018,8.49.51.92
-CatalogFile=Driver.cat
+DriverVer = 12/29/2018,1.7.40.474
+CatalogFile=KeyboardFilter.cat
 
 [DestinationDirs]
 DefaultDestDir = 12
@@ -29,4 +29,4 @@ DefaultDestDir = 12
 [Strings]
 ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
 ClassName=""
-DiskName="Driver Source Disk"
+DiskName="KeyboardFilter Source Disk"

@@ -122,18 +122,18 @@ NTSTATUS MyAttachDevice(PDRIVER_OBJECT DriverObject)
 			//do your work
 			return status;
 		}
-		RtlZeroMemory(myKbdDevice->DeviceExtension, sizeof(DEVICE_EXTENSION));
-		status = IoAttachDeviceToDeviceStackSafe(myDeviceObject, currentDeviceObject, &((PDEVICE_EXTENSION)myKbdDevice->DeviceExtension)->LowerKbdDevice);
+		RtlZeroMemory(myDeviceObject->DeviceExtension, sizeof(DEVICE_EXTENSION));
+		status = IoAttachDeviceToDeviceStackSafe(myDeviceObject, currentDeviceObject, &((PDEVICE_EXTENSION)myDeviceObject->DeviceExtension)->LowerKbdDevice);
 		
 		if (!NT_SUCCESS(status)) {
-			//IoDeleteDevice(myKbdDevice);
+			//IoDeleteDevice(myDeviceObject);
 			//do your work
 			return status;
 		}
 
 
-		myKbdDevice->Flags |= DO_BUFFERED_IO;
-		myKbdDevice->Flags &= ~DO_DEVICE_INITIALIZING;
+		myDeviceObject->Flags |= DO_BUFFERED_IO;
+		myDeviceObject->Flags &= ~DO_DEVICE_INITIALIZING;
 
 		currentDeviceObject = currentDeviceObject->NextDevice;
 	}

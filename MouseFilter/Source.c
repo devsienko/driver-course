@@ -1,8 +1,21 @@
 #include <ntddk.h>
 
+NTSTATUS ObReferenceObjectByName(
+	IN PUNICODE_STRING ObjectName,
+	IN ULONG Attributes,
+	IN PACCESS_STATE AccessState,
+	IN ACCESS_MASK  DesiredAccess,
+	IN POBJECT_TYPE ObjectType,
+	IN KPROCESSOR_MODE AccessMode,
+	IN PVOID ParseContext,
+	OUT PVOID *Object
+);
+
 typedef struct {
 	PDEVICE_OBJECT LowerKbdDevice;
 } DEVICE_EXTENSION, *PDEVICE_EXTENSION;
+
+extern POBJECT_TYPE *IoDriverObjectType;
 
 typedef struct _MOUSE_INPUT_DATA {
 	USHORT UnitId;
@@ -29,11 +42,22 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
 	LARGE_INTEGER interval = { 0 };
 	PDEVICE_OBJECT DeviceObject = DriverObject->DeviceObject;
 	interval.QuadPart = -10 * 1000 * 1000;
-	IoDetachDevice(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice);
+
+	while (DeviceObject) {
+
+		IoDetachDevice(((PDEVICE_EXTENSION)DeviceObject->DeviceExtension)->LowerKbdDevice);
+		DeviceObject = DeviceObject->NextDevice;
+	}
+
 	while (pendingkey) {
 		KeDelayExecutionThread(KernelMode, FALSE, &interval);
 	}
-	IoDeleteDevice(myKbdDevice);
+
+	DeviceObject = DriverObject->DeviceObject;
+	while (DeviceObject) {
+		IoDeleteDevice(myKbdDevice);
+		DeviceObject = DeviceObject->NextDevice;
+	}
 	KdPrint(("Unload Our Driver  \r\n"));
 }
 
@@ -76,22 +100,44 @@ NTSTATUS DispatchRead(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 NTSTATUS MyAttachDevice(PDRIVER_OBJECT DriverObject)
 {
 	NTSTATUS status;
-	UNICODE_STRING TargetDevice = RTL_CONSTANT_STRING(L"\\Device\\PointerClass0");
-	status = IoCreateDevice(DriverObject, sizeof(DEVICE_EXTENSION), NULL, FILE_DEVICE_MOUSE, 0, FALSE, &myKbdDevice);
+	UNICODE_STRING MCName = RTL_CONSTANT_STRING(L"\\Driver\\mouclass");
+	PDRIVER_OBJECT targetDriverObject = NULL;
+	PDEVICE_OBJECT currentDeviceObject = NULL;
+	PDEVICE_OBJECT myDeviceObject = NULL;
+	status = ObReferenceObjectByName(&MCName, OBJ_CASE_INSENSITIVE, NULL, 0, *IoDriverObjectType, KernelMode, NULL, (PVOID*)&targetDriverObject);
+	
 	if (!NT_SUCCESS(status)) {
+		KdPrint(("ObReference failed \r\n"));
 		return status;
 	}
 
-	myKbdDevice->Flags |= DO_BUFFERED_IO;
-	myKbdDevice->Flags &= ~DO_DEVICE_INITIALIZING;
+	ObDereferenceObject(targetDriverObject);
 
-	RtlZeroMemory(myKbdDevice->DeviceExtension, sizeof(DEVICE_EXTENSION));
+	currentDeviceObject = targetDriverObject->DeviceObject;
 
-	status = IoAttachDevice(myKbdDevice, &TargetDevice, &((PDEVICE_EXTENSION)myKbdDevice->DeviceExtension)->LowerKbdDevice);
-	if (!NT_SUCCESS(status)) {
-		IoDeleteDevice(myKbdDevice);
-		return status;
+	while (currentDeviceObject) {
+
+		status = IoCreateDevice(DriverObject, sizeof(DEVICE_EXTENSION), NULL, FILE_DEVICE_MOUSE, 0, FALSE, &myDeviceObject);
+		if (!NT_SUCCESS(status)) {
+			//do your work
+			return status;
+		}
+		RtlZeroMemory(myKbdDevice->DeviceExtension, sizeof(DEVICE_EXTENSION));
+		status = IoAttachDeviceToDeviceStackSafe(myDeviceObject, currentDeviceObject, &((PDEVICE_EXTENSION)myKbdDevice->DeviceExtension)->LowerKbdDevice);
+		
+		if (!NT_SUCCESS(status)) {
+			//IoDeleteDevice(myKbdDevice);
+			//do your work
+			return status;
+		}
+
+
+		myKbdDevice->Flags |= DO_BUFFERED_IO;
+		myKbdDevice->Flags &= ~DO_DEVICE_INITIALIZING;
+
+		currentDeviceObject = currentDeviceObject->NextDevice;
 	}
+
 	return STATUS_SUCCESS;
 }
 

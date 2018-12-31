@@ -1,6 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(402,5): warning MSB8038: Spectre mitigation is enabled but Spectre mitigated libraries are not found.  Verify that the Visual Studio Workload includes the Spectre mitigated libraries.  See https://aka.ms/Ofhn4c for more information.
-  MFCApplication2.cpp
-  MFCApplication2Dlg.cpp
-c:\users\daniil6\source\repos\driver\mfcapplication2\mfcapplication2dlg.cpp(195): warning C4267: 'argument': conversion from 'size_t' to 'DWORD', possible loss of data
-  Generating Code...
-  MFCApplication2.vcxproj -> C:\Users\daniil6\source\repos\Driver\x64\Debug\MFCApplication2.exe

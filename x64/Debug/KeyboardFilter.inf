@@ -7,7 +7,7 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider=%ManufacturerName%
-DriverVer = 12/29/2018,1.7.40.474
+DriverVer = 12/30/2018,17.31.38.414
 CatalogFile=KeyboardFilter.cat
 
 [DestinationDirs]

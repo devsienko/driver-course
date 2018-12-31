@@ -7,7 +7,7 @@ Signature="$WINDOWS NT$"
 Class=System
 ClassGuid={4d36e97d-e325-11ce-bfc1-08002be10318}
 Provider=%ManufacturerName%
-DriverVer = 12/24/2018,21.33.0.616
+DriverVer = 12/30/2018,17.31.30.790
 CatalogFile=CpuMonitorGui.cat
 
 [DestinationDirs]

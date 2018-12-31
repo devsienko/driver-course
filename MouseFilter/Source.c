@@ -33,8 +33,6 @@ typedef struct _MOUSE_INPUT_DATA {
 	ULONG  ExtraInformation;
 } MOUSE_INPUT_DATA, *PMOUSE_INPUT_DATA;
 
-
-PDEVICE_OBJECT myKbdDevice = NULL;
 ULONG pendingkey = 0;
 
 VOID DriverUnload(PDRIVER_OBJECT DriverObject)
@@ -49,11 +47,13 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
 		DeviceObject = DeviceObject->NextDevice;
 	}
 
+
 	while (pendingkey) {
 		KeDelayExecutionThread(KernelMode, FALSE, &interval);
 	}
 
 	DeviceObject = DriverObject->DeviceObject;
+
 	while (DeviceObject) {
 		IoDeleteDevice(DeviceObject);
 		DeviceObject = DeviceObject->NextDevice;

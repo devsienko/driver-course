@@ -55,7 +55,7 @@ VOID DriverUnload(PDRIVER_OBJECT DriverObject)
 
 	DeviceObject = DriverObject->DeviceObject;
 	while (DeviceObject) {
-		IoDeleteDevice(myKbdDevice);
+		IoDeleteDevice(DeviceObject);
 		DeviceObject = DeviceObject->NextDevice;
 	}
 	KdPrint(("Unload Our Driver  \r\n"));
